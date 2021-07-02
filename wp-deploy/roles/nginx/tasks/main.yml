@@ -8,7 +8,7 @@
 
 - name: Removing default conf file
   file:
-    src: /etc/nginx/sites-available/default
+    path: /etc/nginx/sites-available/default
     state: absent
 
 - name: Configure NGINX conf file
