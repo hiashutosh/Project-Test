@@ -117,7 +117,7 @@
         tags:
           Environment: wp
       register: rds_info
-    tags: ['never', 'create-key']
+    tags: ['never', 'create-rds']
 
   - name: EC2 Block
     block:
@@ -133,7 +133,7 @@
         instance_tags:
             Name: "{{ instance_name }}"
         exact_count: "{{ ec2_no }}"
-        key_name: "{{ key_pair }}"
+        key_name: "{{ keyname }}"
       register: ec2_new
     tags: ['never', 'create-ec2']
 
