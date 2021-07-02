@@ -1,0 +1,159 @@
+---
+- name: AWS Scripting
+  hosts: localhost
+  connection: local
+  # secrets.yml file stores aws credentials
+  # varfile.yml stores required variables
+  vars_files:
+    - vars/varsfile.yml
+    - vars/aws-creds.yml
+  environment:
+    - ansible_python_interpreter: /usr/bin/python3.8
+    - AWS_ACCESS_KEY_ID: "{{ myuser }}"
+    - AWS_SECRET_ACCESS_KEY: "{{ mykey }}"
+  gather_facts: false
+
+  tasks:
+
+  - name: VPC block
+    block:
+
+    - name: Create VPC
+      ec2_vpc_net:
+        name: "{{ vpc_name }}"
+        region: "{{ region }}"
+        cidr_block: "{{ cidr_block }}"
+        state: present
+      register: vpcinfo
+
+    - name: Create VPC subnet
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpcinfo.vpc.id }}"
+        region: "{{ region }}"
+        cidr: "{{ subnet_cidr }}"
+        tags:
+          Name: "{{ subnet_name }}"
+        map_public: yes
+      register: subnet
+
+    - name: create IGW
+      ec2_vpc_igw:
+        vpc_id: "{{ vpcinfo.vpc.id }}"
+        region: "{{ region }}"
+        state: present
+        tags:
+          Name: "{{ igw_name }}"
+      register: igw
+    
+    - name: Route IGW
+      ec2_vpc_route_table:
+        vpc_id: "{{ vpcinfo.vpc.id }}"
+        region: "{{ region }}"
+        subnets:
+          - "{{ subnet.subnet.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igw.gateway_id  }}"
+        tags:
+          Name: "{{ route_name }}"
+
+    - name: create Security Group
+      ec2_group:
+        name: "{{ sg_group }}"
+        description: Security Group
+        vpc_id: "{{ vpcinfo.vpc.id }}"
+        region: "{{ region }}"
+        tags:
+          Name: "{{ sg_name }}"
+        rules:
+          - proto: tcp
+            ports:
+            - 80
+            cidr_ip: 0.0.0.0/0
+            rule_desc: allow all on port 80
+          - proto: tcp
+            ports:
+            - 443
+            cidr_ip: 0.0.0.0/0
+            rule_desc: allow all on port 443
+          - proto: tcp
+            ports:
+            - 22
+            cidr_ip: 0.0.0.0/0
+            rule_desc: allow all on port 22
+      register: sg
+    tags: ['never', 'create-vpc']
+
+  - name: Key-pair Block
+    block:
+    - name: Create a new EC2 key
+      ec2_key:
+         name: "{{ keyname }}"
+         region: us-east-2
+      register: ec2_key_result
+
+    - name: Save private key
+      copy: 
+        content: "{{ ec2_key_result.key.private_key }}" 
+        dest: "{{ keydir }}" 
+        mode: 0600
+      when: ec2_key_result.changed
+    tags: ['never', 'create-key']
+
+  - name: RDS Block
+    block:
+    - name: Creating RDS
+      rds_instance:
+        command: create
+        db_engine: "{{ db_engine }}"
+        db_name: "{{ db_name }}"
+        region: "{{ region }}"
+        instance_name: "{{ rds_name }}"
+        size: "{{ db_size }}"
+        instance_type: db.t2.micro
+        username: "{{ db_user }}"
+        password: "{{ db_pass }}"
+        tags:
+          Environment: wp
+      register: rds_info
+    tags: ['never', 'create-key']
+
+  - name: EC2 Block
+    block:
+    - name: create ec2
+      ec2:
+        image: "{{ image_id }}"
+        wait: yes
+        region: "{{ region }}"
+        instance_type: "{{ instance_type }}"
+        group_id: "{{ sg.group_id }}"
+        vpc_subnet_id: "{{ subnet.subnet.id }}"
+        count_tag: "{{ count_tag }}"
+        instance_tags:
+            Name: "{{ instance_name }}"
+        exact_count: "{{ ec2_no }}"
+        key_name: "{{ key_pair }}"
+      register: ec2_new
+    tags: ['never', 'create-ec2']
+
+  - name: Template Block
+    block:
+    - name: Giving aws info to wp-varsfile
+      template:
+        src: 'template/default,j2'
+        dest: '/ansible/wp-deploy/vars/default.yml'    
+    tags: ['never', 'create-vars']    
+
+  - name: EC2 info block
+    block:
+
+    - name: Get Running instance Info
+      ec2_instance_info:
+        region: "{{ region }}"
+      register: ec2info
+
+    - name: Print info
+      debug: var="ec2info.instances"
+
+    tags: ['always', 'get-info']

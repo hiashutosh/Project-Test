@@ -1,0 +1,17 @@
+server {
+        listen {{ http_port }};
+        listen [::]:{{ http_port }};
+        server_name default_server;
+
+        root /var/www/html;
+        listen 443 ssl default_server;
+        # listen [::]:443 ssl default_server;
+        ssl_certificate {{ ssl_dir }}/ca.crt;
+        ssl_certificate_key {{ ssl_dir }}/ca.key;
+        index index.php index.html index.nginx-debian.html;
+        server_name _;
+        location / {
+                try_files \$uri \$uri/ =404;
+
+        }
+}

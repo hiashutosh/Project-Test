@@ -1,0 +1,46 @@
+- name: Download and unpack latest WordPress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: "/var/www/"
+    remote_src: yes
+    creates: "/var/www/wordpress"
+- name: move wordpress to html
+  command: " cp -r /var/www/wordpress/ /var/www/html/"
+  become: yes
+- name: remove wordpress from html
+  command: " rm -rf /var/www/html/index.html /var/www/html/index.nginx-debianhtml"
+  become: yes
+
+- name: Set ownership
+  file:
+    path: "/var/www/html"
+    state: directory
+    recurse: yes
+    owner: www-data
+    group: www-data
+
+- name: Set permissions for directories
+  shell: "/usr/bin/find /var/www/html/ -type d -exec chmod 750 {} \\;"
+
+- name: Set permissions for files
+  shell: "/usr/bin/find /var/www/html/ -type f -exec chmod 640 {} \\;"
+
+- name: Copy sample config file
+  command: "mv /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php "
+  
+  become: yes
+
+- name: Update WordPress config file
+  lineinfile:
+    path: "/var/www/html/wordpress/wp-config.php"
+    regexp: "{{item.regexp}}"
+    line: "{{item.line}}"
+  with_items:
+    - {'regexp': "define\\( 'DB_HOST', '(.)+' \\);", 'line': "define( 'DB_HOST', '{{ db_host }}' );"}
+    - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', '{{mysql_db}}' );"}
+    - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', '{{mysql_user}}' );"}
+    - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{mysql_password}}' );"}
+  
+- name: Restart NGINX service
+  systemd: name=nginx state=restarted
+  

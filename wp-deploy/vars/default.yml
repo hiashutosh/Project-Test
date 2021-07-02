@@ -1,0 +1,21 @@
+#PHP modules
+php_modules: [ 'php', 'php-mysql', 'php-gd', 'php-cli', 'php-common', 'php-fpm' ]
+
+#MySQL Packages
+sql_packages: [ 'mariadb-server', 'mariadb-client' , 'python3-mysqldb' ]
+
+#sudo passwd
+ansible_sudo_pass: "1234"
+
+#MySQL Settings
+mysql_root_password: "password"
+mysql_db: "wpdb"
+mysql_user: "wpuser"
+mysql_password: "password"
+ 
+# Wordpress file size
+upload_size: 50M
+
+# Nginx Configuration
+ssl_dir: /etc/nginx/ssl
+http_port: "80"

@@ -1,0 +1,33 @@
+- name: Install NGINX
+  apt: name=nginx state=latest
+
+- name: Configuring SSL certificate Locally
+  command: "mkdir -p {{ ssl_dir }};
+            openssl req -nodes -x509 \
+            -newkey rsa:2048 -keyout {{ ssl_dir }}/ca.key \
+            -out {{ ssl_dir }}/ca.crt -subj \
+            "/C={{ country-code }}/ST={{ state-code }}/L={{ city }}/O=testing/OU=root/CN=`hostname -f`/{{ email }}"
+  become: yes
+
+- name: Removing default conf file
+  file:
+    src: /etc/nginx/sites-available/default
+    state: absent
+
+- name: Configure NGINX conf file
+  template:
+    src: "files/default.j2"
+    dest: "/etc/nginx/sites-available/default"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Rename default conf file
+  file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/
+    state: link
+    
+- name: Restart NGINX
+  systemd: name=nginx state=restarted enabled=yes
+  
