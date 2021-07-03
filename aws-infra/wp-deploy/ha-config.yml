@@ -10,9 +10,19 @@
 
     - name: Restart NGINX
       systemd: name=nginx state=restarted enabled=yes
-    
-    - name: cron job for backing up wp code to s3
-      cron:
-        name: "EC2 to s3"
-        hour: "1"
-        job: " aws s3 cp --recursive /var/www/html/wordpress {{ s3_bucket_url_code }}"
+
+    - name: Read Node
+      block:
+      - name: cron job for backing up wp code to s3
+        cron:
+          name: "EC2 to s3"
+          job: " aws s3 sync --delete {{ s3_bucket_url_code }} /var/www/html/wordpress"
+      tags: ['never','read-node']
+
+    - name: Write Node
+      block:
+      - name: cron job for backing up wp code to s3
+        cron:
+          name: "EC2 to s3"
+          job: " aws s3 sync --delete /var/www/html/wordpress {{ s3_bucket_url_code }}"
+      tags: ['never','write-node']
