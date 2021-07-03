@@ -67,7 +67,7 @@ Create Auto Scaling Group
 2. Specify the Load balancer same as previously created
 3. Review and create
 
-# For achieving Automated High Availabilty
+# For acheiving Automated High Availabilty
 Follow the given instructions
 Create s3 bucket
 
