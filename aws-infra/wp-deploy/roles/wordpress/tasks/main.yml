@@ -3,14 +3,14 @@
     src: https://wordpress.org/latest.tar.gz
     dest: "/var/www/"
     remote_src: yes
-    creates: "/var/www/wordpress"
-- name: move wordpress to html
-  command: " cp -r /var/www/wordpress/ /var/www/html/"
-  become: yes
-- name: remove wordpress from html
-  file:
-    path: "/var/www/html/index.html /var/www/html/index.nginx-debianhtml"
-  become: yes
+    creates: "/var/www/html/wordpress"
+
+- name: Download and unpack WP-cron plugin for WordPress
+  unarchive:
+    src: https://downloads.wordpress.org/plugin/wp-crontrol.1.10.0.zip
+    dest: "/var/www/html/wordpress/wp-content/plugins"
+    remote_src: yes
+    creates: "/var/www/html/wordpress/wp-content/plugins/wp-crontrol"
 
 - name: Set ownership
   file:
