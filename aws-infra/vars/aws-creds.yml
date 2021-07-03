@@ -1,4 +1,4 @@
-# awsuser has AWS_ACCESS_KEY_ID
-awsuser: XXXXXXXXXXXX
-# awskey has AWS_SECRET_ACCESS_KEY
-awskey: XXXXXXXXXXXXXX
+# myuser has AWS_ACCESS_KEY_ID
+myuser: XXXXXXXXXXXX
+# mykey has AWS_SECRET_ACCESS_KEY
+mykey: XXXXXXXXXXXXXX

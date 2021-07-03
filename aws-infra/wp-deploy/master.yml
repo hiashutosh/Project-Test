@@ -8,5 +8,6 @@
      - upgrade      
      - nginx
      - php 
+# remove # in below line to install db inside instance only i.e. to deploy LEMP stack
 #     - mysql
      - wordpress

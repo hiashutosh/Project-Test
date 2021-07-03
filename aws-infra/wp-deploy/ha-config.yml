@@ -7,15 +7,6 @@
   tasks:
     - name: Installing AWS-CLI
       apt: name=awscli state=latest
-  
-    # - name: Copying .htaccess
-    #   copy:
-    #     src: "{{ s3_bucket_url_htaccess }}"
-    #     dest: /var/www/html/
-  
-    # - name: moving htaccess.txt to .htaccess
-    #   command: "mv /var/www/html/htaccess.txt /var/www/html/wordpress/ "
-    #   become: yes
 
     - name: Restart NGINX
       systemd: name=nginx state=restarted enabled=yes
