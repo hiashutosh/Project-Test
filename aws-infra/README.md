@@ -10,8 +10,11 @@ I will try to achieve high availabilty as soon as possible.
 
 # For manually achieving High Availabilty
 Create s3 bucket
+
 Create IAM role with S3Admin and assign ec2 with it.
+
 Create Load Balancer and associate with EC2
+
 Access intance and perform following:
 1. Install aws-cli
     sudo apt install aws-cli
@@ -29,26 +32,26 @@ Access instance again:
     sudo service crond restart
 Create AMI with this instance: write-node-ami
 ### High Availabilty for read-node
-    Create Launch Configuration with
-    1. AMI: read-node-ami
-    2. apply IAM role with S3Acess role
-    3. Bootstrap code
-        #!/bin/bash
-        sudo apt update -y
-        aws s3 sync --delete s3://<bucker-name> /var/www/html
-    Create Auto Scaling Group
-    1. Specify variuos attributes like min, max instances, subnets
-    2. Specify the Load balancer same as previously created
-    3. Review and create
+Create Launch Configuration with
+1. AMI: read-node-ami
+2. apply IAM role with S3Acess role
+3. Bootstrap code
+    #!/bin/bash
+    sudo apt update -y
+    aws s3 sync --delete s3://<bucker-name> /var/www/html
+Create Auto Scaling Group
+1. Specify variuos attributes like min, max instances, subnets
+2. Specify the Load balancer same as previously created
+3. Review and create
 ### High Availabilty for write-node
-    Create Launch Configuration with
-    1. AMI: write-node-ami
-    2. apply IAM role with S3Acess role
-    3. Bootstrap code
-        #!/bin/bash
-        sudo apt update -y
-        aws s3 sync --delete s3://<bucker-name> /var/www/html
-    Create Auto Scaling Group
-    1. Specify variuos attributes like min, max instances, subnets
-    2. Specify the Load balancer same as previously created
-    3. Review and create
+Create Launch Configuration with
+1. AMI: write-node-ami
+2. apply IAM role with S3Acess role
+3. Bootstrap code
+    #!/bin/bash
+    sudo apt update -y
+    aws s3 sync --delete s3://<bucker-name> /var/www/html
+Create Auto Scaling Group
+1. Specify variuos attributes like min, max instances, subnets
+2. Specify the Load balancer same as previously created
+3. Review and create
