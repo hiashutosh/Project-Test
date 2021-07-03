@@ -17,7 +17,7 @@
   tasks:
     - name: Create an empty bucket
       aws_s3:
-        bucket: wp-ashu-test-bucket
+        bucket: "{{ s3_bucker_name }}"
         mode: create
         region: "{{ region }}"
         permission: public-read

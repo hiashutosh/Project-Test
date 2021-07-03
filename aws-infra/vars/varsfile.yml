@@ -37,3 +37,6 @@ db_user: ashutosh
 db_pass: ashu1234
 db_size: 10
 rds_name: wp-rds
+
+# S3 bucket
+s3_bucket_name: wp-ashu-test-bucket

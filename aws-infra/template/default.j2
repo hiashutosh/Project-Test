@@ -14,3 +14,20 @@ db_host: "{{ rds_info.instance.endpoint }}"
 # Nginx Configuration
 ssl_dir: /etc/nginx/ssl
 http_port: "80"
+http_host: example.com
+ 
+# Wordpress file size
+upload_size: 50M
+
+# Nginx Configuration
+ssl_dir: /etc/nginx/ssl
+http_port: "80"
+
+#SSL Info
+city: Kanpur 
+country-code: IN
+state-code: UP
+email: testingmail2496@gmail.com
+
+#S3 bucket
+s3_bucket_url_code: s3://{{ s3_bucker_name }}
