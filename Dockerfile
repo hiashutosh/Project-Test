@@ -18,7 +18,7 @@ RUN sed 's/#enable_plugins = host_list, virtualbox, yaml, constructed/\
     /etc/ansible/ansible.cfg
 WORKDIR /ansible/
 
-#Copyning script to update crontab inside image
+#Copyning script to update crontab inside image (incomplete)
 COPY cron.sh cron/
 #RUN /cron/cron.sh
 
