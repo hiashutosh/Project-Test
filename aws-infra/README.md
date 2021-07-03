@@ -39,9 +39,9 @@ Create Launch Configuration with
 2. apply IAM role with S3Acess role
 3. Bootstrap code
 
-    #!/bin/bash
-    sudo apt update -y
-    aws s3 sync --delete s3://<bucker-name> /var/www/html
+        #!/bin/bash
+        sudo apt update -y
+        aws s3 sync --delete s3://<bucker-name> /var/www/html
 
 Create Auto Scaling Group
 1. Specify variuos attributes like min, max instances, subnets
@@ -53,9 +53,9 @@ Create Launch Configuration with
 2. apply IAM role with S3Acess role
 3. Bootstrap code
 
-    #!/bin/bash
-    sudo apt update -y
-    aws s3 sync --delete s3://<bucker-name> /var/www/html
+        #!/bin/bash
+        sudo apt update -y
+        aws s3 sync --delete s3://<bucker-name> /var/www/html
 
 Create Auto Scaling Group
 1. Specify variuos attributes like min, max instances, subnets
