@@ -15,45 +15,45 @@
   gather_facts: false
 
   tasks:
-    # - name: Create an empty bucket
-    #   aws_s3:
-    #     bucket: "{{ s3_bucket_name }}"
-    #     mode: create
-    #     region: "{{ region }}"
-    #     permission: public-read
+    - name: Create an empty bucket
+      aws_s3:
+        bucket: "{{ s3_bucket_name }}"
+        mode: create
+        region: "{{ region }}"
+        permission: public-read
 
-    # - name: Get Running instance Info
-    #   ec2_instance_info:
-    #     region: "{{ region }}"
-    #     filters:
-    #       "tag:Name": Wordpress
-    #   register: ec2info
+    - name: Get Running instance Info
+      ec2_instance_info:
+        region: "{{ region }}"
+        filters:
+          "tag:Name": Wordpress
+      register: ec2info
     
-    # - name: Create AMI
-    #   ec2_ami:
-    #     instance_id: "{{ ec2info.instances.instance_id }}"
-    #     wait: no
-    #     name: testAMI
-    #   register: ami_info
+    - name: Create AMI
+      ec2_ami:
+        instance_id: "{{ ec2info.instances.instance_id }}"
+        wait: no
+        name: testAMI
+      register: ami_info
 
-    # - name: create launch config
-    #   ec2_lc:
-    #     name: my_new_lc
-    #     image_id: "{{ ami_info.image_id }}"
-    #     key_name: "{{ keyname }}"
-    #     region: "{{ region }}"
-    #     security_groups: "{{ ec2info.instances.groups.group_id }}"
-    #     instance_type: t2.micro
-    #     assign_public_ip: yes
+    - name: create launch config
+      ec2_lc:
+        name: my_new_lc
+        image_id: "{{ ami_info.image_id }}"
+        key_name: "{{ keyname }}"
+        region: "{{ region }}"
+        security_groups: "{{ ec2info.instances.groups.group_id }}"
+        instance_type: t2.micro
+        assign_public_ip: yes
     
-    # - name: Creating autoscaling group
-    #   ec2_asg:
-    #     name: myasg
-    #     launch_config_name: my_new_lc
-    #     health_check_period: 60
-    #     health_check_type: ELB
-    #     replace_all_instances: yes
-    #     min_size: 1
-    #     max_size: 3
-    #     desired_capacity: 2
-    #     region: "{{ region }}"
+    - name: Creating autoscaling group
+      ec2_asg:
+        name: myasg
+        launch_config_name: my_new_lc
+        health_check_period: 60
+        health_check_type: ELB
+        replace_all_instances: yes
+        min_size: 1
+        max_size: 3
+        desired_capacity: 2
+        region: "{{ region }}"
