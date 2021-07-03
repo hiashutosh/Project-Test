@@ -1,9 +1,11 @@
 ---
 plugin: aws_ec2
-aws_access_key: AKIA3ORIXZ3BPK6RNZ33
-aws_secret_key: 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
+aws_access_key: XXXXXXXXXXXXXX
+aws_secret_key: XXXXXXXXXXXXXX
 regions:
   - us-east-2
 filters:
   tag:Name:
-  - wordpress
+  - Wordpress
+
+enable_plugins = host_list, virtualbox, yaml, constructed, aws_ec2
