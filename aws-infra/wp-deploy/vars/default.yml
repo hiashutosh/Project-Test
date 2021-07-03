@@ -12,7 +12,7 @@ mysql_root_password: "password"
 mysql_db: "wpdb"
 mysql_user: "wpuser"
 mysql_password: "password"
- 
+db_host: mysql
 # Wordpress file size
 upload_size: 50M
 
@@ -25,3 +25,6 @@ city: Kanpur
 country-code: IN
 state-code: UP
 email: testingmail2496@gmail.com
+
+#S3 bucket
+s3_bucket_url_code: s3://wp-ashu-test-bucket
