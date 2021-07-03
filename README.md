@@ -48,6 +48,8 @@ Get Aws inventory using plugin: aws_ec2 { provide aws credentials in file wp-dep
 Configure wordpress on ec2
 
     ansible-playbook -i inventory/inventory_aws_ec2.yml master.yml --private-key=aws-key.pem -u ubuntu 
+NOTE:
+Bydefault aws rds will be used as Database for wordpress.
 
 ## using bootstrap commands in user-data
 
@@ -130,9 +132,11 @@ Edit file aws-infra.yml
             systemctl enable nginx
             sudo nginx -s reload
         register: ec2_new
+NOTE:
+Using this method we have to manually setup the wordpress config file
+Just open the public-ip of instance and follow instructions
 
 NOTE:
-Bydefault aws rds will be used as Database for wordpress.
 To deploy complete LEMP stack on any VM follow:
 uncomment the role of mysql in file /wp-deploy/master.yml
 and run command
