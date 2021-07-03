@@ -19,19 +19,23 @@ Create Load Balancer and associate with EC2
 
 Access intance and perform following:
 1. Install aws-cli
-    sudo apt install aws-cli
+        
+        sudo apt install aws-cli
 2. Copy all files to s3 bucket
-    sudo aws s3 cp --recursive /var/www/html/* s3://<bucket-name>
+        
+        sudo aws s3 cp --recursive /var/www/html/* s3://<bucket-name>
 3. Edit Crontab file so that wp code is sync with s3 (This will be configured to read node)
-    sudo crontab -e
-    add line: */1 * * * * sudo aws s3 cp sync --delete s3://<bucket-name> /var/www/html
-    sudo service crond restart
+        
+        sudo crontab -e
+        add line: */1 * * * * sudo aws s3 cp sync --delete s3://<bucket-name> /var/www/html
+        sudo service crond restart
 Create AMI with this instance: read-node-ami
 Access instance again:
 1. Edit Crontab file so that wp code is sync with s3 ( Now this will be configured to write node)
-    sudo crontab -e
-    add line: */1 * * * * sudo aws s3 cp sync --delete /var/www/html s3://<bucket-name> 
-    sudo service crond restart
+        
+        sudo crontab -e
+        add line: */1 * * * * sudo aws s3 cp sync --delete /var/www/html s3://<bucket-name> 
+        sudo service crond restart
 Create AMI with this instance: write-node-ami
 ### High Availabilty for read-node
 Create Launch Configuration with
@@ -42,7 +46,6 @@ Create Launch Configuration with
         #!/bin/bash
         sudo apt update -y
         aws s3 sync --delete s3://<bucker-name> /var/www/html
-
 Create Auto Scaling Group
 1. Specify variuos attributes like min, max instances, subnets
 2. Specify the Load balancer same as previously created
@@ -56,7 +59,6 @@ Create Launch Configuration with
         #!/bin/bash
         sudo apt update -y
         aws s3 sync --delete s3://<bucker-name> /var/www/html
-
 Create Auto Scaling Group
 1. Specify variuos attributes like min, max instances, subnets
 2. Specify the Load balancer same as previously created
