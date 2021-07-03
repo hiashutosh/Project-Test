@@ -17,7 +17,7 @@
   tasks:
     - name: Create an empty bucket
       aws_s3:
-        bucket: "{{ s3_bucker_name }}"
+        bucket: "{{ s3_bucket_name }}"
         mode: create
         region: "{{ region }}"
         permission: public-read
