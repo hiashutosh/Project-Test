@@ -11,16 +11,21 @@
     - ansible_python_interpreter: /usr/bin/python3.8
     - AWS_ACCESS_KEY_ID: "{{ myuser }}"
     - AWS_SECRET_ACCESS_KEY: "{{ mykey }}"
-
+    - AWS_REGION: "{{ region }}"
   gather_facts: false
 
   tasks:
+  - name: Create Bucket
+    block:
     - name: Create an empty bucket
       aws_s3:
         bucket: "{{ s3_bucket_name }}"
         mode: create
         region: "{{ region }}"
+    tags: ['never', 'create-bucket']
 
+  - name: Get AWS info
+    block:
     - name: Get Running instance Info
       ec2_instance_info:
         region: "{{ region }}"
@@ -28,27 +33,41 @@
           "tag:Name": Wordpress
       register: ec2info
     
+    - name: get ami info
+      ec2_ami_info:
+        filters:
+          "tag:env": "{{ ami_mode }}"
+      register: ami_info
+    tags: ['always', 'get-info'] 
+
+  - name: AMI creation
+    block:
     - name: Create AMI
       ec2_ami:
         instance_id: "{{ ec2info.instances.instance_id }}"
         wait: no
-        name: testAMI
+        name: "{{ ami_name }}"
+        tags:
+          env: "{{ ami_mode }}"
       register: ami_info
+    tags: ['never', 'create_ami']
 
+  - name: Achieve HA for {{ ami_name }} 
+    block:
     - name: create launch config
       ec2_lc:
-        name: my_new_lc
+        name: "{{ lb_name }}"
         image_id: "{{ ami_info.image_id }}"
         key_name: "{{ keyname }}"
         region: "{{ region }}"
         security_groups: "{{ ec2info.instances.groups.group_id }}"
         instance_type: t2.micro
         assign_public_ip: yes
-    
+      register: lc_info
     - name: Creating autoscaling group
       ec2_asg:
-        name: myasg
-        launch_config_name: my_new_lc
+        name: "{{ asg_name }}"
+        launch_config_name: "{{ lc_info.name }}"
         health_check_period: 60
         health_check_type: ELB
         replace_all_instances: yes
@@ -56,3 +75,4 @@
         max_size: 3
         desired_capacity: 2
         region: "{{ region }}"
+    tags: ['never', 'make-ha']
