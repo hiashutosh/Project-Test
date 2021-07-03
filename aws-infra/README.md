@@ -61,4 +61,57 @@ Create Auto Scaling Group
 3. Review and create
 
 # For achieving Automated High Availabilty
-Run 
+Follow the given instructions
+Create s3 bucket
+
+        ansible-playbook aws-ha.yml --tags:create-bucket
+Manually Create IAM role with S3Admin and assign ec2 with it.
+Manually Create Application Load Balancer (Name: test-lb) and associate with EC2
+NOTE: Provide the LoadBalancer name in vars/varsfile.yml
+
+
+Configuring intance to make read node:
+
+        ansible-playbook -i inventory/inventory.yml ha-config.yml --tags=read-node --private-key=aws-key.pem -u ubuntu
+Modify vars/varsfile.yml to create read-HA
+
+        #ELB vars
+        lb_name: test-lb
+        #AMI vars
+        ami_name: read-node-ami
+        ami_mode: read
+        #Launch Configuration vars
+        lc_name: read-Launch-config
+        # AutoScaling vars
+        asg_name: Read-AutoScaling
+        
+Create AMI with this instance: read-node-ami
+
+        ansible-playbook aws-ha.yml --tags=create-ami
+
+Configuring intance to make write node:
+
+        ansible-playbook -i inventory/inventory.yml ha-config.yml --tags=read-node --private-key=aws-key.pem -u ubuntu
+Modify vars/varsfile.yml to create read-HA
+
+        #ELB vars
+        lb_name: test-lb
+        #AMI vars
+        ami_name: write-node-ami
+        ami_mode: write
+        #Launch Configuration vars
+        lc_name: write-Launch-config
+        # AutoScaling vars
+        asg_name: write-AutoScaling
+Create AMI with this instance: write-node-ami
+
+        ansible-playbook aws-ha.yml --tags=create-ami
+
+### High Availabilty for read-node
+Create Launch Configuration and AutoScaling
+
+        ansible-playbook aws-ha.yml --tags=make-ha
+### High Availabilty for write-node
+Create Launch Configuration and AutoScaling
+
+        ansible-playbook aws-ha.yml --tags=make-ha

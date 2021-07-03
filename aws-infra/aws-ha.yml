@@ -15,15 +15,6 @@
   gather_facts: false
 
   tasks:
-  - name: Create Bucket
-    block:
-    - name: Create an empty bucket
-      aws_s3:
-        bucket: "{{ s3_bucket_name }}"
-        mode: create
-        region: "{{ region }}"
-    tags: ['never', 'create-bucket']
-
   - name: Get AWS info
     block:
     - name: Get Running instance Info
@@ -38,7 +29,23 @@
         filters:
           "tag:env": "{{ ami_mode }}"
       register: ami_info
+
+    - name: get elb info
+      ec2_elb_info:
+        Name: "{{ lb_name }}"
+      register: elb_info
+
     tags: ['always', 'get-info'] 
+
+  - name: Create Bucket
+    block:
+    - name: Create an empty bucket
+      aws_s3:
+        bucket: "{{ s3_bucket_name }}"
+        mode: create
+        region: "{{ region }}"
+    tags: ['never', 'create-bucket']
+
 
   - name: AMI creation
     block:
@@ -51,23 +58,33 @@
           env: "{{ ami_mode }}"
       register: ami_info
     tags: ['never', 'create_ami']
-
+  
   - name: Achieve HA for {{ ami_name }} 
     block:
     - name: create launch config
       ec2_lc:
-        name: "{{ lb_name }}"
+        name: "{{ lc_name }}"
         image_id: "{{ ami_info.image_id }}"
         key_name: "{{ keyname }}"
         region: "{{ region }}"
         security_groups: "{{ ec2info.instances.groups.group_id }}"
         instance_type: t2.micro
+        user_data: |
+          #!/bin/bash
+          sudo apt update -y
+          aws s3 sync --delete s3://<bucker-name> /var/www/html
         assign_public_ip: yes
+        volumes:
+        - device_name: /dev/sda1
+          volume_size: 8
+          delete_on_termination: true
+
       register: lc_info
     - name: Creating autoscaling group
       ec2_asg:
         name: "{{ asg_name }}"
         launch_config_name: "{{ lc_info.name }}"
+        load_balancers: "{{ lb_name }}"
         health_check_period: 60
         health_check_type: ELB
         replace_all_instances: yes

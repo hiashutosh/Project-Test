@@ -40,3 +40,16 @@ rds_name: wp-rds
 
 # S3 bucket
 s3_bucket_name: wp-ashu-test-bucket
+
+
+#For Making HA change the following vars accordingly or provide vars in command
+#Bydefault read-HA will be created
+#ELB vars
+lb_name: test-lb
+#AMI vars
+ami_name: read-node-ami
+ami_mode: read
+#Launch Configuration vars
+lc_name: read-Launch-config
+# AutoScaling vars
+asg_name: Read-AutoScaling
