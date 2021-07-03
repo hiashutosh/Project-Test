@@ -81,6 +81,7 @@ Edit file aws-infra.yml
                     tar -xzf latest.tar.gz
                     cp -r wordpress /var/www/html/
                     rm -rf /var/www/html/index.html /var/www/html/index-org.html
+                    chown -R www:data:www-data /var/www/html/wordpress
 
                     nginx_conf() {
                     
