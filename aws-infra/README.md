@@ -10,8 +10,11 @@ Currently only aws-infra.yml is being used, aws-asg.yml is written to configure 
 
 I will try to achieve high availabilty as soon as possible.
 
-# Update
+# Update-1
 Tried to achive High Availabilty
+# Update-2
+Tried to add wp-cron job to add post hourly:
+[Readme for configuring cron job](https://github.com/hiashutosh/Project-Test/blob/master/aws-infra/wp-deploy/README.md)
 
 # For manually achieving High Availabilty
 Create s3 bucket
