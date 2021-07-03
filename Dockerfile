@@ -3,10 +3,10 @@ FROM ubuntu:focal
 RUN apt-get update -y
 
 # Installing required Dependecies for ansible
-RUN apt-get install -y \
+RUN set -ex; \
+    apt-get install -y \
     ansible \
-    python3-pip3 \
-    jinja2
+    python3-pip
 
 # Installing required python libraries for aws-boto    
 RUN pip3 install boto3 
@@ -23,6 +23,6 @@ COPY cron.sh cron/
 RUN /cron/cron.sh
 
 # copying playbooks inside our image
-COPY ansible/ /ansible/
+COPY aws-infra/ /ansible/
 
 ENTRYPOINT ["/bin/bash"]

@@ -6,14 +6,14 @@ cidr_block: 173.32.0.0/16
 
 #Key-Pair Vars
 keyname: ansiblekey
-keydir: "./wp-deploy/aws-key.pem"
+keydir: "wp-deploy/aws-key.pem"
 
 #Intances Vars
 image_id: ami-00399ec92321828f5
 instance_type: t2.micro
 ec2_no: 1
 count_tag: webserver
-instance_name: Nginx
+instance_name: Wordpress
 
 #Security Group IVars
 sg_name: web
@@ -21,10 +21,14 @@ sg_group: Ansible-SG
 rds_sg_name: RDS-SG
 
 #Subnet Vars
-subnet_cidr: 173.32.0.0/20
+subnet_cidr1: 173.32.0.0/20
+subnet_cidr2: 173.32.16.0/20
+subnet1_az: us-east-2a
+subnet2_az: us-east-2b
 route_name: Igw2
 subnet_name: ansible-subnet
 igw_name: ansible-igw
+rds_subnet: RDS-Subnet
 
 #RDS vars
 db_name: wordpress

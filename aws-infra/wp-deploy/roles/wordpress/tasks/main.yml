@@ -8,7 +8,8 @@
   command: " cp -r /var/www/wordpress/ /var/www/html/"
   become: yes
 - name: remove wordpress from html
-  command: " rm -rf /var/www/html/index.html /var/www/html/index.nginx-debianhtml"
+  file:
+    path: "/var/www/html/index.html /var/www/html/index.nginx-debianhtml"
   become: yes
 
 - name: Set ownership
@@ -26,8 +27,7 @@
   shell: "/usr/bin/find /var/www/html/ -type f -exec chmod 640 {} \\;"
 
 - name: Copy sample config file
-  command: "mv /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php "
-  
+  command: "cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php "
   become: yes
 
 - name: Update WordPress config file

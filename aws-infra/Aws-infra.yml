@@ -26,16 +26,29 @@
         state: present
       register: vpcinfo
 
-    - name: Create VPC subnet
+    - name: Create VPC subnet-1
       ec2_vpc_subnet:
         state: present
         vpc_id: "{{ vpcinfo.vpc.id }}"
         region: "{{ region }}"
-        cidr: "{{ subnet_cidr }}"
+        cidr: "{{ subnet_cidr1 }}"
+        az: "{{ subnet1_az }}"
         tags:
           Name: "{{ subnet_name }}"
         map_public: yes
-      register: subnet
+      register: subnet1
+
+    - name: Create VPC subnet-2
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpcinfo.vpc.id }}"
+        region: "{{ region }}"
+        cidr: "{{ subnet_cidr2 }}"
+        az: "{{ subnet2_az }}"
+        tags:
+          Name: "{{ subnet_name }}"
+        map_public: yes
+      register: subnet2
 
     - name: create IGW
       ec2_vpc_igw:
@@ -51,7 +64,8 @@
         vpc_id: "{{ vpcinfo.vpc.id }}"
         region: "{{ region }}"
         subnets:
-          - "{{ subnet.subnet.id }}"
+          - "{{ subnet1.subnet.id }}"
+          - "{{ subnet2.subnet.id }}"
         routes:
           - dest: 0.0.0.0/0
             gateway_id: "{{ igw.gateway_id  }}"
@@ -106,7 +120,7 @@
 
     - name: create RDS Security Group
       ec2_group:
-        name: "{{ rds_sg_group }}"
+        name: "{{ rds_sg_name }}"
         description: RDS Security Group
         vpc_id: "{{ vpcinfo.vpc.id }}"
         region: "{{ region }}"
@@ -121,26 +135,45 @@
           - proto: tcp
             ports:
             - 3306
-            cidr_ip: "{{ sg.group_id }}"
+            group_id: "{{ sg.group_id }}"
             rule_desc: allow traffics from ec2
-        register: rds_sg
+      register: rds_sg
+    
+    - name: RDS subnet Group
+      rds_subnet_group:
+        name: "{{ rds_subnet }}"
+        state: present
+        region: "{{ region }}"
+        description: rds subnet group
+        subnets:
+          - "{{ subnet1.subnet.id }}"
+          - "{{ subnet2.subnet.id }}"
+      register: rds_subnet
+
     - name: Creating RDS
       rds_instance:
-        command: create
-        security_groups: "{{ rds_sg }}"
-        db_engine: "{{ db_engine }}"
+        state: present
+        db_subnet_group_name: "{{ rds_subnet.subnet_group.name }}"
+        vpc_security_group_ids: "{{ rds_sg.group_id }}"
+        engine: "{{ db_engine }}"
         db_name: "{{ db_name }}"
         region: "{{ region }}"
-        instance_name: "{{ rds_name }}"
-        size: "{{ db_size }}"
+        id: "{{ rds_name }}"
+        allocated_storage: "{{ db_size }}"
         instance_type: db.t2.micro
-        username: "{{ db_user }}"
-        password: "{{ db_pass }}"
+        master_username: "{{ db_user }}"
+        master_user_password: "{{ db_pass }}"
         port: 3306
-#        multi_zone: yes
+#        multi_az: yes
         tags:
           Environment: wp
       register: rds_info
+
+    - name: Giving aws info to wp-varsfile
+      template:
+        src: 'template/default,j2'
+        dest: 'wp-deploy/vars/default.yml' 
+
     tags: ['never', 'create-rds']
 
   - name: EC2 Block
@@ -152,22 +185,14 @@
         region: "{{ region }}"
         instance_type: "{{ instance_type }}"
         group_id: "{{ sg.group_id }}"
-        vpc_subnet_id: "{{ subnet.subnet.id }}"
+        vpc_subnet_id: "{{ subnet1.subnet.id }}"
         count_tag: "{{ count_tag }}"
         instance_tags:
             Name: "{{ instance_name }}"
         exact_count: "{{ ec2_no }}"
         key_name: "{{ keyname }}"
       register: ec2_new
-    tags: ['never', 'create-ec2']
-
-  - name: Template Block
-    block:
-    - name: Giving aws info to wp-varsfile
-      template:
-        src: 'template/default,j2'
-        dest: 'wp-deploy/vars/default.yml'    
-    tags: ['never', 'create-vars']    
+    tags: ['never', 'create-ec2'] 
 
   - name: EC2 info block
     block:
@@ -175,6 +200,8 @@
     - name: Get Running instance Info
       ec2_instance_info:
         region: "{{ region }}"
+        filters:
+          "tag:Name": Wordpress
       register: ec2info
 
     - name: Print info
