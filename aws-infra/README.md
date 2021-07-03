@@ -1,6 +1,8 @@
 # Custom AWS
 All variables are stored in vars/varsfile.yml
+
 Just Update the varsfile with your custom variables.
+
 aws-infra.yml will create various resources on aws and at last perform a template making so that variable required for wp-deploy.
 
 # NOTE
