@@ -1,6 +1,8 @@
 # Custom AWS
 All variables are stored in vars/varsfile.yml
+
 Just Update the varsfile with your custom variables.
+
 aws-infra.yml will create various resources on aws and at last perform a template making so that variable required for wp-deploy.
 
 # NOTE
@@ -10,8 +12,11 @@ I will try to achieve high availabilty as soon as possible.
 
 # For manually achieving High Availabilty
 Create s3 bucket
+
 Create IAM role with S3Admin and assign ec2 with it.
+
 Create Load Balancer and associate with EC2
+
 Access intance and perform following:
 1. Install aws-cli
     sudo apt install aws-cli
