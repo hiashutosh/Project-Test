@@ -16,6 +16,8 @@ Tried to achive High Availabilty
 Tried to add wp-cron job to add post hourly:
 [Readme for configuring cron job](https://github.com/hiashutosh/Project-Test/blob/master/aws-infra/wp-deploy/README.md)
 
+Perform this before applying high availabilty
+
 # For manually achieving High Availabilty
 Create s3 bucket
 
