@@ -1,0 +1,27 @@
+- hosts: all
+  gather_facts: False
+  become: yes
+  connection: ssh
+  vars_files:
+    - vars/default.yml
+  tasks:
+    - name: Installing AWS-CLI
+      apt: name=awscli state=latest
+  
+    # - name: Copying .htaccess
+    #   copy:
+    #     src: "{{ s3_bucket_url_htaccess }}"
+    #     dest: /var/www/html/
+  
+    # - name: moving htaccess.txt to .htaccess
+    #   command: "mv /var/www/html/htaccess.txt /var/www/html/wordpress/ "
+    #   become: yes
+
+    - name: Restart NGINX
+      systemd: name=nginx state=restarted enabled=yes
+    
+    - name: cron job for backing up wp code to s3
+      cron:
+        name: "EC2 to s3"
+        hour: "1"
+        job: " aws s3 cp --recursive /var/www/html/wordpress {{ s3_bucket_url_code }}"
