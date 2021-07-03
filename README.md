@@ -136,7 +136,7 @@ NOTE:
 Using this method we have to manually setup the wordpress config file
 Just open the public-ip of instance and follow instructions
 
-NOTE:
+# NOTE:
 To deploy complete LEMP stack on any VM follow:
 uncomment the role of mysql in file /wp-deploy/master.yml
 and run command
