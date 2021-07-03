@@ -20,7 +20,7 @@ WORKDIR /ansible/
 
 #Copyning script to update crontab inside image
 COPY cron.sh cron/
-RUN /cron/cron.sh
+#RUN /cron/cron.sh
 
 # copying playbooks inside our image
 COPY aws-infra/ /ansible/
