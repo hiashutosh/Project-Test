@@ -1,0 +1,4 @@
+# awsuser has AWS_ACCESS_KEY_ID
+awsuser: XXXXXXXXXXXX
+# awskey has AWS_SECRET_ACCESS_KEY
+awskey: XXXXXXXXXXXXXX

@@ -3,7 +3,7 @@ server {
         listen [::]:{{ http_port }};
         server_name default_server;
 
-        root /var/www/html;
+        root /var/www/html/wordpress;
         listen 443 ssl default_server;
         # listen [::]:443 ssl default_server;
         ssl_certificate {{ ssl_dir }}/ca.crt;

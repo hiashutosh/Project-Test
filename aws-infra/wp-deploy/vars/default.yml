@@ -19,3 +19,9 @@ upload_size: 50M
 # Nginx Configuration
 ssl_dir: /etc/nginx/ssl
 http_port: "80"
+
+#SSL Info
+city: Kanpur 
+country-code: IN
+state-code: UP
+email: testingmail2496@gmail.com

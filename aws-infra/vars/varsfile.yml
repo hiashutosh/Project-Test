@@ -1,24 +1,31 @@
 region: "us-east-2"
+
 #VPC Vars
 vpc_name: "Ansible"
 cidr_block: 173.32.0.0/16
+
 #Key-Pair Vars
 keyname: ansiblekey
 keydir: "./wp-deploy/aws-key.pem"
+
 #Intances Vars
 image_id: ami-00399ec92321828f5
 instance_type: t2.micro
 ec2_no: 1
 count_tag: webserver
 instance_name: Nginx
+
 #Security Group IVars
 sg_name: web
 sg_group: Ansible-SG
+rds_sg_name: RDS-SG
+
 #Subnet Vars
 subnet_cidr: 173.32.0.0/20
 route_name: Igw2
 subnet_name: ansible-subnet
 igw_name: ansible-igw
+
 #RDS vars
 db_name: wordpress
 db_engine: MySQL
