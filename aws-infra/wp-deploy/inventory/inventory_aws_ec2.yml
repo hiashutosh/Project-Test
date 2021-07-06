@@ -7,5 +7,3 @@ regions:
 filters:
   tag:Name:
   - Wordpress
-
-enable_plugins = host_list, virtualbox, yaml, constructed, aws_ec2
